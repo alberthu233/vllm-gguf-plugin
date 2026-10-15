@@ -17,6 +17,13 @@ from .gguf_utils import (
 from .weights_adapter import get_adapter_architecture
 
 
+_DRAFT_ARCH_MARKERS = ("DraftModel", "MTP", "Eagle", "DFlash", "DSpark", "Medusa")
+
+
+def _is_draft_architecture(architecture: str) -> bool:
+    return any(marker in architecture for marker in _DRAFT_ARCH_MARKERS)
+
+
 class GGUFConfigParser(ConfigParserBase):
     def parse(
         self,
@@ -35,6 +42,12 @@ class GGUFConfigParser(ConfigParserBase):
             code_revision=code_revision,
             **kwargs,
         )
+
+        # Speculative drafts (e.g. a DFlash/LiLiCorr safetensors draft beside a GGUF
+        # target) inherit the target's GGUF config format but are not GGUF models;
+        # keep their declared architecture.
+        if any(_is_draft_architecture(a) for a in config_dict.get("architectures") or []):
+            return config_dict, config
 
         if config.model_type == "qwen3_moe" and "norm_topk_prob" not in config_dict:
             config_dict["norm_topk_prob"] = True
