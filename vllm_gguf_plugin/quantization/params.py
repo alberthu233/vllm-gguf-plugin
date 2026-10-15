@@ -23,11 +23,21 @@ def _resolve_gguf_weight_loader(
     layer: torch.nn.Module,
     fallback_weight_loader=None,
 ):
-    return (
-        layer.weight_loader_v2
-        if hasattr(layer, "weight_loader_v2")
-        else fallback_weight_loader
-    )
+    if hasattr(layer, "weight_loader_v2"):
+        return layer.weight_loader_v2
+    if fallback_weight_loader is None:
+        return None
+
+    # Layers without weight_loader_v2 (e.g. ReplicatedLinear) use a v1 loader
+    # that no longer materializes uninitialized parameters; store GGUF data
+    # through the parameter itself for unsharded loads.
+    def _gguf_v1_weight_loader(param, loaded_weight, *args, **kwargs):
+        if hasattr(param, "_store") and not args and not kwargs:
+            param._store(loaded_weight)
+            return None
+        return fallback_weight_loader(param, loaded_weight, *args, **kwargs)
+
+    return _gguf_v1_weight_loader
 
 
 def _resolve_gguf_weight_type_loader(
@@ -175,7 +185,7 @@ def _materialize_gguf_moe_param(
 
     shard_dim += 1
     if shard_id in {"w1", "w3"}:
-        final_shape[1] *= 2
+        final_shape[1] *= layer.moe_config.w13_num_shards
     final_shape[shard_dim] = (
         final_shape[shard_dim] // layer.moe_config.moe_parallel_config.tp_size
     )
