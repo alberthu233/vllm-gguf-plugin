@@ -1,5 +1,7 @@
 # vLLM GGUF Quantization Plugin
 
+> **Fork note:** this fork adds Nemotron-H / Nemotron 3.5 Bolt GGUF support (text and vision, with DFlash speculative decoding). See [NEMOTRON_BOLT.md](NEMOTRON_BOLT.md) for what changed, how to serve it and results on an A40. Branch `bolt-pr141` adds the faster upstream PR #141 kernels; `main` mirrors upstream.
+
 This plugin provides out-of-tree GGUF quantization support for vLLM after
 in-tree support deprecation
 ([vllm-project/vllm#39583](https://github.com/vllm-project/vllm/issues/39583)).
