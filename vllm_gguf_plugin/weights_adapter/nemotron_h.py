@@ -226,8 +226,12 @@ class NemotronHGGUFAdapter(BaseGGUFWeightsAdapter):
                 if name.endswith("patch_generator.pos_embed"):
                     yield name, weight.unsqueeze(0)
                     continue
-                if name.endswith(("patch_generator.embedder.weight",
-                                  "patch_generator.video_embedder.weight")):
+                if name.endswith(
+                    (
+                        "patch_generator.embedder.weight",
+                        "patch_generator.video_embedder.weight",
+                    )
+                ):
                     yield name, weight.reshape(weight.shape[0], -1)
                     continue
 

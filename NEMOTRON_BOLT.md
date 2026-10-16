@@ -17,10 +17,10 @@ Tag `nemotron-bolt-2026-10` marks the tip of `nemotron-h-support`, and `nemotron
 ## What the changes add
 
 - **`weights_adapter/nemotron_h.py`**, a new adapter for `nemotron_h`, `nemotron_h_puzzle` and `nemotron_h_omni` configs:
-  - maps llama.cpp tensor names to vLLM's `NemotronH*` and `NemotronH_Nano_VL_V2` (Omni) models; per-layer "puzzle" expert counts come from the HF config;
-  - undoes llama.cpp's conversion transforms: `ssm_a = -exp(A_log)`, reshaped `ssm_d` and `ssm_norm`, squeezed `ssm_conv1d`. The Llama q/k row permutation is harmless for this model's attention (no rotary embedding), so it is loaded as stored;
-  - dequantizes the NVFP4 Mamba `ssm_in`/`ssm_out` tensors to the model dtype and applies their per-tensor `.scale`;
-  - maps the mmproj file (C-RADIO vision encoder and `mlp1` projector), re-fusing q/k/v and reshaping the patch embeddings and position embeddings back.
+    - maps llama.cpp tensor names to vLLM's `NemotronH*` and `NemotronH_Nano_VL_V2` (Omni) models; per-layer "puzzle" expert counts come from the HF config;
+    - undoes llama.cpp's conversion transforms: `ssm_a = -exp(A_log)`, reshaped `ssm_d` and `ssm_norm`, squeezed `ssm_conv1d`. The Llama q/k row permutation is harmless for this model's attention (no rotary embedding), so it is loaded as stored;
+    - dequantizes the NVFP4 Mamba `ssm_in`/`ssm_out` tensors to the model dtype and applies their per-tensor `.scale`;
+    - maps the mmproj file (C-RADIO vision encoder and `mlp1` projector), re-fusing q/k/v and reshaping the patch embeddings and position embeddings back.
 - **Non-gated MoE** (relu2 experts) in the GGUF MoE method: `w13_num_shards` and `MoEActivation.is_gated`.
 - **Vec MoE chunking:** the vec MoE path processes large batches in chunks, because its kernels launch `grid.z = tokens * top_k`, capped at 65535.
 - **`ReplicatedLinear`:** layers without `weight_loader_v2` get a GGUF-aware loader fallback.
