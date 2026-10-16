@@ -7,7 +7,7 @@ It is kept as a working reference. It is not an upstream release and is not affi
 ## Branches
 
 | Branch | Contents | Use it for |
-|---|---|---|
+| --- | --- | --- |
 | `nemotron-h-support` (default) | Our commits on upstream `main` (`e2b8ad5`) | Reading the changes; a clean base for an upstream PR |
 | `bolt-pr141` | The same changes merged onto upstream [PR #141](https://github.com/vllm-project/vllm-gguf-plugin/pull/141) (pinned llama.cpp kernels: MMQ/MMVQ for IQ types) | Serving: about 3x the multi-user throughput |
 | `main` | Upstream, unchanged | Syncing with upstream |
@@ -77,7 +77,7 @@ The weights take about 28 GiB, plus about 1 GiB for the drafter. Text, thinking 
 Speed: output tok/s from `vllm bench serve`, random 1K-token prompts, 256 output tokens. Random prompts lower drafter acceptance; on real prompts a single stream reached about 111 tok/s.
 
 | | 1 user | 8 users | 32 users | TTFT at 128K |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | Plugin `main` kernels | 28 | 57 | - | - |
 | PR #141 kernels (`bolt-pr141`) | 38 | 164 | 297 | 34 s |
 | PR #141 + LiLiCorr DFlash, 7 tokens | 72 | 198 | (max 8 seqs) | 36 s |
@@ -88,7 +88,7 @@ DFlash acceptance was 48-59%, with about 86-88% at the first draft position.
 Accuracy, with the same harness and settings for every model (mostly temperature 0). In tau2 the model plays agent, user and judge.
 
 | | Bolt 24GB GGUF | Qwen3.8-27B INT4 | MiniCPM-V 4.7 35B-A3B GPTQ |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | tau2 airline / retail / telecom | 0.700 / 0.825 / 0.711 | 0.780 / 0.851 / 0.886 | 0.840 / 0.886 / 0.965 |
 | BIRD dev (execution accuracy) | 54.9% | 63.4% | 57.3% |
 | OCRBench | 820 | 866 | 888 |
